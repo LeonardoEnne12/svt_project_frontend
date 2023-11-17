@@ -1,28 +1,58 @@
-.celulaClicada {
-  background-color: rgb(160, 207, 160); /* Cor para célula clicada */
+.clickedCell {
+  background-color: rgb(160, 207, 160); 
 }
 
-.celulaPadrao {
-  background-color: rgb(236, 236, 236); /* Cor para célula não clicada */
+.standardCell {
+  background-color: rgb(236, 236, 236);
 }
 
-  
 .table-container {
-  text-align: center; /* Centraliza a tabela */
-  padding: 20px; /* Adiciona padding ao redor da tabela */
+  text-align: center;
+  padding: 20px;
+  overflow: visible;
 }
 
 table {
-  font-family: 'Times New Roman', Times, serif; /* Define a fonte para Times New Roman */
-  margin: auto; /* Centraliza a tabela horizontalmente */
-  border-collapse: separate; /* Importante para que o border-radius funcione */
-  border-spacing: 0; /* Remove o espaçamento entre as células */
-  border-radius: 10px; /* Bordas arredondadas */
-  overflow: hidden; /* Garante que o conteúdo não ultrapasse os cantos arredondados */
+  font-family: 'Times New Roman', Times, serif;
+  margin: auto;
+  border-collapse: separate;
+  border-spacing: 0;
+  border-radius: 10px;
+  overflow: visible;
+  border: 1px solid black;
 }
 
 td {
-  padding: 10px; /* Espaçamento interno das células */
-  cursor: pointer; /* Cursor como ponteiro para indicar que a célula é clicável */
-  /* border: 1px solid black; */
+  padding: 10px;
+  cursor: pointer;
+  border-right: 1px solid black;
+  border-bottom: 1px solid black;
+}
+
+td:last-child {
+  border-right: none;
+}
+
+tr:last-child td {
+  border-bottom: none;
+}
+
+tr:last-child td:first-child {
+  border-bottom-left-radius: 10px;
+  border-bottom: none;
+}
+
+tr:last-child td:last-child {
+  border-bottom-right-radius: 10px;
+  border-right: none;
+  border-bottom: none;
+}
+
+tr:first-child td:first-child {
+  border-top-left-radius: 10px;
+}
+
+tr:first-child  td:last-child{
+  border-top-right-radius: 10px;
+  border-right: none;
 }

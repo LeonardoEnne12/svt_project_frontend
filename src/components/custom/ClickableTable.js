@@ -1,45 +1,59 @@
 import React, { useState } from 'react';
 import './ClickableTable.css';
-import dadosCurriculares from '../custom/dados_curriculares_atualizados.json'; // Importar dados
+import Tooltip from './Tooltip';
+import curricularData from '../custom/dados_curriculares_atualizados.json'; 
 
-const ClickableTable = () => {
-  const [celulasClicadas, setCelulasClicadas] = useState({});
-  const linhas = 10;
-  const colunas = 11;
+const ClickableTable = ({lines,columns}) => {
+  const [clickedCells, setClickedCells] = useState({});
 
-  const handleClick = (linha, coluna) => {
-    const chave = `${linha}-${coluna}`;
-    setCelulasClicadas(prev => ({ ...prev, [chave]: !prev[chave] }));
+  const handleClick = (line, column) => {
+    const cellContent = matrix[line][column];
+    if (!cellContent || column < 1) return;
+    const key = `${line}-${column}`;
+    setClickedCells(prev => ({ ...prev, [key]: !prev[key] }));
   };
 
-  // Criar matriz para a tabela
-  const matriz = Array.from({ length: linhas }, () =>
-    Array.from({ length: colunas }, () => '')
+  const matrix = Array.from({ length: lines }, (_, indexLine) =>
+    Array.from({ length: columns + 1 }, (_, indexColumn) => {
+      if (indexColumn === 0) {
+        return `${indexLine + 1}º`;
+      }
+      return '';
+    })
   );
 
-  // Preencher a matriz com os dados curriculares
-  dadosCurriculares.forEach(dado => {
-    const [linha, coluna] = dado.position;
-    matriz[linha][coluna] = dado.curricular_unit;
+  curricularData.forEach(data => {
+    const [line, column] = data.position;
+    matrix[line][column + 1] = data.curricular_unit;
   });
 
   return (
     <div className="table-container">
       <table>
         <tbody>
-          {matriz.map((linha, indiceLinha) => (
-            <tr key={indiceLinha}>
-              {linha.map((celula, indiceColuna) => {
-                const chaveCelula = `${indiceLinha}-${indiceColuna}`;
-                const classeCelula = celulasClicadas[chaveCelula] ? 'celulaClicada' : 'celulaPadrao';
+          {matrix.map((line, indexLine) => (
+            <tr key={indexLine}>
+              {line.map((cell, indexColumn) => {
+                
+                const keyCell = `${indexLine}-${indexColumn}`;
+                const classCell = clickedCells[keyCell] ? 'clickedCell' : 'standardCell';
+                const dataCell = curricularData.find(d => 
+                  d.position[0] === indexLine && d.position[1] + 1 === indexColumn);
 
                 return (
                   <td
-                    key={indiceColuna}
-                    className={classeCelula}
-                    onClick={() => handleClick(indiceLinha, indiceColuna)}
+                    key={indexColumn}
+                    className={classCell}
+                    onClick={() => handleClick(indexLine, indexColumn)}
+                    style={{
+                      cursor: (cell && indexColumn > 0) ? 'pointer' : 'default', 
+                    }}
                   >
-                    {celula}
+                    {dataCell ? (
+                      <Tooltip text={`Pré-requisitos : ${dataCell.prerequisites.join(', ')}\nCarga horária: ${dataCell.workload}\nCréditos: ${dataCell.credit}`}>
+                        {cell}
+                      </Tooltip>
+                    ) : cell}
                   </td>
                 );
               })}

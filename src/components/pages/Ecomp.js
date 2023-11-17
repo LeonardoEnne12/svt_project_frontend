@@ -4,7 +4,7 @@ import ClickableTable from '../custom/ClickableTable';
 const Ecomp = () => {
   return (
     <div>
-      <ClickableTable />
+       <ClickableTable lines={10} columns={11} />
     </div>
   );
 }

@@ -19,7 +19,7 @@ const CustomDropdown = ({ options, onSelect, placeholder }) => {
     <div className="dropdown">
       <button className="dropdown-button" onClick={handleToggle}>
         {selectedOption}
-        <span>&#709;</span> {/* Certifique-se de que este é o caractere correto para a seta */}
+        <span>&#709;</span>
       </button>
       {isOpen && (
         <ul className="dropdown-menu">
