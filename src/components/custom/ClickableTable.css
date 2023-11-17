@@ -1,9 +1,13 @@
-.clickedCell {
+.approvedCell {
   background-color: rgb(160, 207, 160); 
 }
 
 .standardCell {
   background-color: rgb(236, 236, 236);
+}
+
+.cannotDoCell {
+  background-color: rgb(255, 145, 145);
 }
 
 .table-container {
@@ -55,4 +59,29 @@ tr:first-child td:first-child {
 tr:first-child  td:last-child{
   border-top-right-radius: 10px;
   border-right: none;
+}
+
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1000;
+  cursor: pointer;
+  user-select: none;
+}
+
+.popuptext {
+  visibility: hidden;
+  width: 160px;
+  background-color: #555;
+  color: #fff;
+  text-align: center;
+  border-radius: 6px;
+  padding: 8px 5px;
+}
+
+.popuptext.show {
+  visibility: visible;
+  opacity: 1;
 }
