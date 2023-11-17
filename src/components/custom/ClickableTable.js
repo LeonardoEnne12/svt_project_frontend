@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import './ClickableTable.css';
 import Tooltip from './Tooltip';
-import curricularData from '../custom/dados_curriculares_atualizados.json';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
 
-const ClickableTable = ({ lines, columns }) => {
+
+const ClickableTable = ({ lines, columns, curricularData }) => {
   const [completedUnits, setCompletedUnits] = useState(new Set());
   const [showPopup, setShowPopup] = useState(false);
   const [popupContent, setPopupContent] = useState('');
@@ -38,15 +40,6 @@ const ClickableTable = ({ lines, columns }) => {
     }
   };
 
-  useEffect(() => {
-    if (showPopup) {
-      const timer = setTimeout(() => {
-        setShowPopup(false);
-      }, 4000);
-      return () => clearTimeout(timer);
-    }
-  }, [showPopup]);
-
   const matrix = Array.from({ length: lines }, (_, indexLine) =>
     Array.from({ length: columns + 1 }, (_, indexColumn) => {
       if (indexColumn === 0) {
@@ -56,6 +49,45 @@ const ClickableTable = ({ lines, columns }) => {
     })
   );
 
+  const exportToPdf = () => {
+    const element = document.getElementById("table");
+    if (element) {
+      html2canvas(element).then(originalCanvas => {
+        // Criar um novo canvas para rotacionar a imagem
+        const rotatedCanvas = document.createElement('canvas');
+        const context = rotatedCanvas.getContext('2d');
+  
+        // Definir as dimensões do novo canvas
+        rotatedCanvas.width = originalCanvas.height;
+        rotatedCanvas.height = originalCanvas.width;
+  
+        // Rotacionar e desenhar a imagem original no novo canvas
+        context.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
+        context.rotate(90 * Math.PI / 180); // Rotação de 90 graus
+        context.drawImage(originalCanvas, -originalCanvas.width / 2, -originalCanvas.height / 2);
+  
+        // Converter o canvas rotacionado para uma imagem em formato de dados
+        const imgData = rotatedCanvas.toDataURL('image/png');
+  
+        // Criar o PDF com a imagem rotacionada
+        const pdf = new jsPDF();
+        pdf.addImage(imgData, 'PNG', 0, 0);
+        pdf.save("tabela.pdf");
+      });
+    } else {
+      console.error("Elemento não encontrado");
+    }
+  };
+
+  useEffect(() => {
+    if (showPopup) {
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup]);
+
   curricularData.forEach(data => {
     const [line, column] = data.position;
     matrix[line][column + 1] = data.curricular_unit;
@@ -63,14 +95,21 @@ const ClickableTable = ({ lines, columns }) => {
 
   return (
     <div className="table-container">
-      {/* Popup */}
+       <div className="instructions">
+        <p>Interaja com a tabela clicando nas células. Cada cor tem um significado:</p>
+        <ul>
+          <li><span className="approvedCell"></span> Concluído</li>
+          <li><span className="standardCell"></span> Disponível para fazer</li>
+          <li><span className="cannotDoCell"></span> Não disponível (pré-requisitos não atendidos)</li>
+        </ul>
+      </div>
       {showPopup && (
         <div className="popup">
           <span className="popuptext show">{popupContent}</span>
         </div>
       )}
 
-      <table>
+      <table id="table" >
         <tbody>
           {matrix.map((line, indexLine) => (
             <tr key={indexLine}>
@@ -110,6 +149,7 @@ const ClickableTable = ({ lines, columns }) => {
           ))}
         </tbody>
       </table>
+      <button className="export-button" onClick={exportToPdf}>Exportar para PDF</button>
     </div>
   );
 };

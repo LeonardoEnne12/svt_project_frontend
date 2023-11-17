@@ -13,7 +13,7 @@ const CoursePage = () => {
     };
 
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh', fontFamily: 'Times New Roman'}}>
         <CustomDropdown options={options} onSelect={handleSelect} placeholder="Selecione seu curso"/>
         </div>
     );
