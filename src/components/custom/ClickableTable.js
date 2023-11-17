@@ -49,35 +49,36 @@ const ClickableTable = ({ lines, columns, curricularData }) => {
     })
   );
 
+
   const exportToPdf = () => {
     const element = document.getElementById("table");
     if (element) {
       html2canvas(element).then(originalCanvas => {
-        // Criar um novo canvas para rotacionar a imagem
+        
         const rotatedCanvas = document.createElement('canvas');
         const context = rotatedCanvas.getContext('2d');
-  
-        // Definir as dimensões do novo canvas
         rotatedCanvas.width = originalCanvas.height;
         rotatedCanvas.height = originalCanvas.width;
-  
-        // Rotacionar e desenhar a imagem original no novo canvas
         context.translate(rotatedCanvas.width / 2, rotatedCanvas.height / 2);
-        context.rotate(90 * Math.PI / 180); // Rotação de 90 graus
+        context.rotate(90 * Math.PI / 180);
         context.drawImage(originalCanvas, -originalCanvas.width / 2, -originalCanvas.height / 2);
   
-        // Converter o canvas rotacionado para uma imagem em formato de dados
         const imgData = rotatedCanvas.toDataURL('image/png');
   
-        // Criar o PDF com a imagem rotacionada
-        const pdf = new jsPDF();
-        pdf.addImage(imgData, 'PNG', 0, 0);
+        const pdf = new jsPDF({
+          orientation: rotatedCanvas.width > rotatedCanvas.height ? 'l' : 'p', // Paisagem ou retrato
+          unit: 'px',
+          format: [rotatedCanvas.width, rotatedCanvas.height]
+        });
+        pdf.addImage(imgData, 'PNG', 0, 0, rotatedCanvas.width, rotatedCanvas.height);
         pdf.save("tabela.pdf");
       });
     } else {
       console.error("Elemento não encontrado");
     }
   };
+
+  
 
   useEffect(() => {
     if (showPopup) {
